@@ -1,32 +1,70 @@
 # PostCSS Class Prefixer
 
-[PostCSS] plugin to prefix all off the classes with a class name of your choosing..
+Opinionated [PostCSS] plugin to prefix all off the classes and root tags with a class name of your choosing except for IDs and children of @keyframes.
 
-[PostCSS]: https://github.com/postcss/postcss
+The html root tag gets affixed like so:
 
 ```css
-.foo {
-    /* Input example */
+html.foo {
+  baz: 3px;
+}
+```
+
+[postcss]: https://github.com/postcss/postcss
+
+### Examples
+
+```css
+/* Input */
+.bar-a {
+  baz: 3px;
+}
+.bar-b,
+div {
+  baz: 3px;
+}
+.bar-c,
+#bar,
+.bar-d {
+  baz: 3px;
 }
 ```
 
 ```css
-.foo {
-  /* Output example */
+/* Output */
+.foo .bar-a {
+  baz: 3px;
+}
+.foo .bar-b,
+.foo div {
+  baz: 3px;
+}
+.foo .bar-c,
+#bar,
+.foo .bar-d {
+  baz: 3px;
 }
 ```
 
 ## Usage
 
-**Step 1:** Install plugin:
+**Step 1:** Install plugin (and `postcss` if you haven't got it in your project):
 
 ```sh
-npm install --save-dev postcss postcss-class-prefixer
+npm install --save-dev postcss-class-prefixer
 ```
 
-**Step 2:** Check you project for existed PostCSS config: `postcss.config.js`
+**Step 2:** Check you project for existing PostCSS config: `postcss.config.js`
 in the project root, `"postcss"` section in `package.json`
 or `postcss` in bundle config.
+
+Example:
+
+```js
+postcss([plugin(opts)]).process(input);
+```
+
+Where `opts` is and object with the prefix key containing your class for prefixing `{ prefix: '.my-custom-prefix' }` and `input` is a string of your css `'.foo { bar: baz; }'`
 
 If you do not use PostCSS, add it according to [official docs]
 and set this plugin in settings.
