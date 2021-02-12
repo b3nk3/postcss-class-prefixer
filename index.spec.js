@@ -77,4 +77,12 @@ describe('Class Perfixer tests', () => {
   it('skips empty selectors', async () => {
     await run(`{ a:10px; }`, `{ a:10px; }`, { prefix: prefixSelector });
   });
+
+  it('handles mixed multiple selectors', async () => {
+    await run(
+      `.class-a, div{ b: 4px; }, #id, .class-b { a:10px; }`,
+      `${prefixSelector} .class-a, ${prefixSelector} div{ b: 4px; }, #id, ${prefixSelector} .class-b { a:10px; }`,
+      { prefix: prefixSelector }
+    );
+  });
 });
