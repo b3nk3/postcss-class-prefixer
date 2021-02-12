@@ -1,3 +1,23 @@
 language: node_js
 node_js:
   - node
+  - lts/*
+
+jobs:
+  include:
+    # Define the prerelease stage that runs clean-publish
+    - stage: prerelease
+      node_js: lts/*
+      skip_cleanup: true
+      script: 
+        - npx clean-publish --without-publish
+    # Define the release stage that runs semantic-release
+    - stage: release
+      node_js: lts/*
+      # Advanced: optionally overwrite your default `script` step to skip the tests
+      # script: skip
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script:
+          - npx semantic-release
