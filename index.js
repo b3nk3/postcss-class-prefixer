@@ -73,17 +73,6 @@ module.exports = (opts = {}) => {
   };
 
   /**
-   * Checks if the rule is an ID
-   *
-   * @param {Object} rule AST Object from PostCSS
-   * @returns boolean
-   */
-  const isRuleId = rule => {
-    const { selector } = rule;
-    return selector.includes('#');
-  };
-
-  /**
    * Determins whether to prefix a certain rule or no
    * Currently hardcoded to skip IDs and child rules of `@keyframes`
    *
