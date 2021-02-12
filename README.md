@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/b3nk3/postcss-class-prefixer.svg?token=j23qhVmXEx5v17YPL7yq&branch=main)](https://travis-ci.com/b3nk3/postcss-class-prefixer)
+
 # PostCSS Class Prefixer
 
 Opinionated [PostCSS] plugin to prefix all off the classes and root tags with a class name of your choosing except for IDs and children of @keyframes.
