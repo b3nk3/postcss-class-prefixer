@@ -1,28 +1,59 @@
-module.exports = (opts = { }) => {
-
+module.exports = (opts = {}) => {
   // Work with options here
+  const { prefix } = opts;
+
+  const addWrapToSelector = (selector) => {
+    if (selector === "html") {
+      return selector + prefix;
+    }
+    return `${prefix} ${selector}`;
+  };
+
+  const wrapCSSSelector = (selector) => {
+    if (selector === "") {
+      return null;
+    }
+
+    return addWrapToSelector(selector);
+  };
+
+  const wrapCssRuleSelector = (cssRuleSelector) => {
+    return cssRuleSelector
+      .split(",")
+      .map((selector) => wrapCSSSelector(selector.trim()))
+      .join(", ");
+  };
+
+  const isRuleKeyframes = (rule) => {
+    const { parent } = rule;
+    return parent.type === "atrule" && parent.name.includes("keyframes");
+  };
+
+  const isRuleId = (rule) => {
+    const { selector } = rule;
+    return selector.includes("#");
+  };
+
+  const checkIncludeRules = (rule) => {
+    // Don't prefix IDs
+    if (isRuleId(rule)) {
+      return false;
+    }
+    // Don't prefix keyframe rules
+    if (isRuleKeyframes(rule)) {
+      return false;
+    }
+    return true;
+  };
 
   return {
-    postcssPlugin: 'postcss-class-prefixer',
-    /*
-    Root (root, postcss) {
-      // Transform CSS AST here
-    }
-    */
+    postcssPlugin: "postcss-class-prefixer",
+    Rule(rule) {
+      const { selector } = rule;
+      if (checkIncludeRules(rule))
+        rule.selector = wrapCssRuleSelector(selector);
+    },
+  };
+};
 
-    /*
-    Declaration (decl, postcss) {
-      // The faster way to find Declaration node
-    }
-    */
-
-    /*
-    Declaration: {
-      color: (decl, postcss) {
-        // The fastest way find Declaration node if you know property name
-      }
-    }
-    */
-  }
-}
-module.exports.postcss = true
+module.exports.postcss = true;
