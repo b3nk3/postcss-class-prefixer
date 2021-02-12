@@ -17,13 +17,30 @@ module.exports = (opts = {}) => {
     );
   }
 
+  /**
+   * Prefixes the selector with the user provided prefix
+   * Special case for html is hard coded
+   *
+   * @param {string} selector css selector
+   * @returns prefixed string
+   */
   const addWrapToSelector = selector => {
+    // Suffix `html`
     if (selector === 'html') {
       return selector + prefix;
     }
+
+    // Don't prefix IDs
+    if (selector.includes('#')) return selector;
+
     return `${prefix} ${selector}`;
   };
 
+  /**
+   * Checks if the selector is empty
+   * @param {string} selector css selector
+   * @returns string | null
+   */
   const wrapCSSSelector = selector => {
     if (selector === '') {
       return null;
@@ -32,6 +49,11 @@ module.exports = (opts = {}) => {
     return addWrapToSelector(selector);
   };
 
+  /**
+   * Splits a list of selectors and prefixes them individually then rejoins them
+   * @param {string} cssRuleSelector css selector
+   * @returns string
+   */
   const wrapCssRuleSelector = cssRuleSelector => {
     return cssRuleSelector
       .split(',')
@@ -39,21 +61,36 @@ module.exports = (opts = {}) => {
       .join(', ');
   };
 
+  /**
+   * Checks if the rule's parent is a keyframe
+   *
+   * @param {object} rule AST Object from PostCSS
+   * @returns boolean
+   */
   const isRuleKeyframes = rule => {
     const { parent } = rule;
     return parent.type === 'atrule' && parent.name.includes('keyframes');
   };
 
+  /**
+   * Checks if the rule is an ID
+   *
+   * @param {Object} rule AST Object from PostCSS
+   * @returns boolean
+   */
   const isRuleId = rule => {
     const { selector } = rule;
     return selector.includes('#');
   };
 
+  /**
+   * Determins whether to prefix a certain rule or no
+   * Currently hardcoded to skip IDs and child rules of `@keyframes`
+   *
+   * @param {Object} rule AST Object from PostCSS
+   * @returns boolean
+   */
   const checkIncludeRules = rule => {
-    // Don't prefix IDs
-    if (isRuleId(rule)) {
-      return false;
-    }
     // Don't prefix keyframe rules
     if (isRuleKeyframes(rule)) {
       return false;
