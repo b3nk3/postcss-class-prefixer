@@ -11,6 +11,10 @@
     "webpack-loader"
   ],
   "main": "dist/index.js",
+  "files": [
+    "*.md",
+    "build"
+  ],
   "scripts": {
     "build": "npm run clean && tsc",
     "clean": "rm -rf ./dist",
