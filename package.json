@@ -10,6 +10,11 @@
     "prefixer",
     "webpack-loader"
   ],
+  "main": "dist/index.js",
+  "files": [
+    "*.md",
+    "build"
+  ],
   "scripts": {
     "test": "jest-ci --coverage && eslint-ci ."
   },
