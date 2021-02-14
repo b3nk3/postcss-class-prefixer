@@ -1,22 +1,6 @@
-const { isEmptyObject } = require('./utils/isEmptyObject');
+import { PostCSSAcceptedPlugin, PostCSSRule } from './Types';
 
-module.exports = (opts = {}) => {
-  // Work with options here
-
-  const { prefix } = opts;
-
-  if (isEmptyObject(opts)) {
-    throw new Error(
-      'postcss-wrap-plugin: prefix option needs to be provided (eg.: `{ prefix: ".my-class-prefix"}` )'
-    );
-  }
-
-  if (typeof prefix !== 'string') {
-    throw new Error(
-      'postcss-wrap-plugin: prefix option should be a string (eg.: ".my-class-prefix")'
-    );
-  }
-
+export = (prefixSelector: string): PostCSSAcceptedPlugin => {
   /**
    * Prefixes the selector with the user provided prefix
    * Special case for html is hard coded
@@ -24,16 +8,16 @@ module.exports = (opts = {}) => {
    * @param {string} selector css selector
    * @returns prefixed string
    */
-  const addWrapToSelector = selector => {
+  const addWrapToSelector = (selector: string) => {
     // Suffix `html`
     if (selector === 'html') {
-      return selector + prefix;
+      return selector + prefixSelector;
     }
 
     // Don't prefix IDs
     if (selector.includes('#')) return selector;
 
-    return `${prefix} ${selector}`;
+    return `${prefixSelector} ${selector}`;
   };
 
   /**
@@ -41,7 +25,7 @@ module.exports = (opts = {}) => {
    * @param {string} selector css selector
    * @returns string | null
    */
-  const wrapCSSSelector = selector => {
+  const wrapCSSSelector = (selector: string) => {
     if (selector === '') {
       return null;
     }
@@ -54,10 +38,11 @@ module.exports = (opts = {}) => {
    * @param {string} cssRuleSelector css selector
    * @returns string
    */
-  const wrapCssRuleSelector = cssRuleSelector => {
-    return cssRuleSelector
+  const wrapCssRuleSelector = (rule: PostCSSRule) => {
+    const { selector } = rule;
+    return selector
       .split(',')
-      .map(selector => wrapCSSSelector(selector.trim()))
+      .map((selector: string) => wrapCSSSelector(selector.trim()))
       .join(', ');
   };
 
@@ -67,9 +52,9 @@ module.exports = (opts = {}) => {
    * @param {object} rule AST Object from PostCSS
    * @returns boolean
    */
-  const isRuleKeyframes = rule => {
+  const isRuleKeyframes = (rule: PostCSSRule) => {
     const { parent } = rule;
-    return parent.type === 'atrule' && parent.name.includes('keyframes');
+    return parent?.type === 'atrule' && parent?.name?.includes('keyframes');
   };
 
   /**
@@ -79,7 +64,7 @@ module.exports = (opts = {}) => {
    * @param {Object} rule AST Object from PostCSS
    * @returns boolean
    */
-  const checkIncludeRules = rule => {
+  const checkIncludeRules = (rule: PostCSSRule) => {
     // Don't prefix keyframe rules
     if (isRuleKeyframes(rule)) {
       return false;
@@ -89,12 +74,8 @@ module.exports = (opts = {}) => {
 
   return {
     postcssPlugin: 'postcss-class-prefixer',
-    Rule(rule) {
-      const { selector } = rule;
-      if (checkIncludeRules(rule))
-        rule.selector = wrapCssRuleSelector(selector);
+    Rule(rule: PostCSSRule): void {
+      if (checkIncludeRules(rule)) rule.selector = wrapCssRuleSelector(rule);
     },
   };
 };
-
-module.exports.postcss = true;

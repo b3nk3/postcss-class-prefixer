@@ -4,6 +4,18 @@
 
 Opinionated [PostCSS] plugin to prefix all off the classes and root tags with a class name of your choosing except for IDs and children of @keyframes.
 
+[postcss]: https://github.com/postcss/postcss
+
+## Inspiration
+
+I had a use case for a plugin that prefixes `tags`, `classes`, and affixes the `html` tag and skips `IDs`. I also wanted to experiment with TypeScript, Semantic Release and Travis CI.
+
+So in this project I've done all.
+
+I'd like to say thanks to [nutboltu](https://github.com/nutboltu) and [dbtedman](https://github.com/dbtedman) for their work that I have based this piece on.
+
+### Examples
+
 The html root tag gets affixed like so:
 
 ```css
@@ -11,10 +23,6 @@ html.foo {
   baz: 3px;
 }
 ```
-
-[postcss]: https://github.com/postcss/postcss
-
-### Examples
 
 ```css
 /* Input */
