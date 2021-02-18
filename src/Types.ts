@@ -17,3 +17,8 @@ export interface PostCSSAcceptedPlugin {
 
   Rule(rule: PostCSSRule): void;
 }
+
+export interface PluginOptionsObject {
+  prefixSelector: string;
+  shouldPrefixId?: boolean;
+}

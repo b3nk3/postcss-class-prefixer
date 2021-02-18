@@ -1,6 +1,13 @@
-import { PostCSSAcceptedPlugin, PostCSSRule } from './Types';
+import {
+  PostCSSAcceptedPlugin,
+  PostCSSRule,
+  PluginOptionsObject,
+} from './Types';
 
-export = (prefixSelector: string): PostCSSAcceptedPlugin => {
+export = ({
+  prefixSelector = '',
+  shouldPrefixId = false,
+}: PluginOptionsObject): PostCSSAcceptedPlugin => {
   /**
    * Prefixes the selector with the user provided prefix
    * Special case for html is hard coded
@@ -14,8 +21,10 @@ export = (prefixSelector: string): PostCSSAcceptedPlugin => {
       return selector + prefixSelector;
     }
 
-    // Don't prefix IDs
-    if (selector.includes('#')) return selector;
+    // Don't prefix IDs by default
+    if (!shouldPrefixId && selector.includes('#')) {
+      return selector;
+    }
 
     return `${prefixSelector} ${selector}`;
   };
